@@ -1,7 +1,7 @@
 const Discord = require('discord.js'):
 const client = new Discord.Client();
 const Eris = require('eris');
-var bot = new Eris("NDAwNzU2MjczNzk0MTIxNzI4.DTgS7Q.CW86zv5AHso802q3jZj-5mM_6No");
+var bot = new Eris("NDAwNzU2MjczNzk0MTIxNzI4.DTmMpQ.BhDTbo-DfyHmRGOGChJHBjiFNyI");
 
 client.on('ready', () => {
   conslose.log('Irasshaimasen!');
