@@ -359,7 +359,7 @@ bot.on("messageCreate", (msg) => {
 	};
 });
 
-//	3.1	Gariland Magic City
+//	3.2	Gariland Magic City
 
 bot.on("messageCreate", (msg) => {
 	if(msg.content === "/shop" && msg.channel.id === "399316614152978446") {
@@ -439,7 +439,7 @@ bot.on("messageCreate", (msg) => {
 	};
 });
 
-//	3.2	Test Bot
+//	3.3	Test Bot
 
 bot.on("messageCreate", (msg) => {
 	if(msg.content === "/shop" && msg.channel.id === "400772367560736769") {
