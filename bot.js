@@ -25,15 +25,16 @@ const nexttxt = "/next.txt"
 const goldtxt = "/gold.txt"
 const dbinv = "dbinv/"
 var pExp = 0
-var pLv = 0
-var pNext = 0
-var pGold = 0
+var pLv = 1
+var pNext = 109
+var pGold = 100
+var winRate = 0
 
 function createPlayer() {
   fs.writeFile((dbplayer + i + exptxt), "0")
-  fs.writeFile((dbplayer + i + lvtxt), "0")
-  fs.writeFile((dbplayer + i + nexttxt), "0")
-  fs.writeFile((dbplayer + i + goldtxt), "0")
+  fs.writeFile((dbplayer + i + lvtxt), "1")
+  fs.writeFile((dbplayer + i + nexttxt), "109")
+  fs.writeFile((dbplayer + i + goldtxt), "100")
 };
 
 //	Console
@@ -47,11 +48,11 @@ bot.on("ready", () => {
 
 bot.on("messageCreate", (msg) => {
 	if(msg.content === "/reset") {
-    let i = msg.author.id.toString()
-		fs.writeFile((dbplayer + i + exptxt), 0)
-    fs.writeFile((dbplayer + i + lvtxt), 1)
-    fs.writeFile((dbplayer + i + nexttxt), 109)
-    fs.writeFile((dbplayer + i + goldtxt), 100)
+    i = msg.author.id.toString()
+		fs.writeFile((dbplayer + i + exptxt), "0")
+    fs.writeFile((dbplayer + i + lvtxt), "1")
+    fs.writeFile((dbplayer + i + nexttxt), "109")
+    fs.writeFile((dbplayer + i + goldtxt), "100")
     bot.createMessage(msg.channel.id, ("```Personagem de " + msg.author.username + " resetado```"))
 	};
 });
@@ -61,16 +62,25 @@ bot.on("messageCreate", (msg) => {
 bot.on("messageCreate", (msg) => {
 	if(msg.content === "/help") {
 		bot.createMessage(msg.channel.id, {embed: {
-			title: "Ivalice System",
-      description: "v0.2",
+			author: {
+        name: "Ivalice System",
+      },
+      description: "`v0.2`",
       color: 16777215,
+      thumbnail: {
+				url: "https://i.imgur.com/PsxsFfA.png"
+			},
 			fields: [{
 				name: "Comandos",
-				value: "―――――"
+				value: "` `"
+			},
+      {
+				name: "/help",
+				value: "Abre esta janela de ajuda"
 			},
       {
 				name: "/player",
-				value: "Verifica os atributos básicos do personagem, como Experiência, Nível e Gold"
+				value: "Verifica os atributos básicos do personagem, como Experiência, Nível e *Gold*"
 			},
       {
 				name: "/inventory",
@@ -83,6 +93,14 @@ bot.on("messageCreate", (msg) => {
       {
         name: "/field",
 			  value: "Verifica os monstros da região"
+			},
+      {
+        name: "/explore",
+			  value: "Explora a região com chances de encontrar e batalhar com algum inimigo a fim de ganhar Experiência, *Gold* e *Loot*. Caso a região possua algum *Boss*, utilizar o comando `/boss` e o nome do *Boss*"
+			},
+      {
+        name: "/boss",
+			  value: "Entra em batalha contra o *boss* especificado"
 			}],
     }});
   };
@@ -162,11 +180,14 @@ bot.on("messageCreate", (msg) => {
   if(msg.author.id != 400756273794121728) {
 		if(msg.content.indexOf("/") != 0) {
 
-      //	Verificar se os bancos de dados do jogador já foram criados
+      //	Verificar se jogador já foram criados
       if (fs.existsSync(dbplayer + i + exptxt)) {
       } else {
         //  Criar jogador
-        createPlayer
+        fs.writeFile((dbplayer + i + exptxt), "0")
+        fs.writeFile((dbplayer + i + lvtxt), "1")
+        fs.writeFile((dbplayer + i + nexttxt), "109")
+        fs.writeFile((dbplayer + i + goldtxt), "100")
       }
 		  //	Fim da verificação
 
@@ -222,11 +243,14 @@ bot.on("messageCreate", (msg) => {
 		if(msg.author.id != 400756273794121728) {
       i = msg.author.id.toString()
 
-      //	Verificar bancos de dados do jogador já foram criados
+      //	Verificar se jogador já foram criados
       if (fs.existsSync(dbplayer + i + exptxt)) {
       } else {
         //  Criar jogador
-        createPlayer
+        fs.writeFile((dbplayer + i + exptxt), "0")
+        fs.writeFile((dbplayer + i + lvtxt), "1")
+        fs.writeFile((dbplayer + i + nexttxt), "109")
+        fs.writeFile((dbplayer + i + goldtxt), "100")
       }
 			//	Fim das verificaçôes de jogador
 
@@ -242,37 +266,36 @@ bot.on("messageCreate", (msg) => {
       });
       fs.readFile(dbplayer + i + goldtxt, 'utf8', function(err, data) {
         pGold = data
-        eval("player" + i + " = new Player(" + pExp + ", " + pLv + ", " + pNext + ", " + pGold + ")")
 
         //	Início do Embed
         bot.createMessage(msg.channel.id, {embed: {
-			  color: 16777215,
-			  thumbnail: {
-			   url: msg.author.avatarURL,
-	      },
-		    fields: [{
-   				name: msg.author.username,
- 	  			value: "―――――――"
-   			},
-   			{
-	    		name: "EXP Total",
-   				value: pExp,
-   				inline: true
-	    	},
-   			{
-   				name: "Nível",
-   				value: pLv,
-   				inline: true
-   			},
-   			{
-   				name: "EXP Necessária",
-   				value: pNext,
-   			},
-   			{
-   				name: "Gold",
-   				value: pGold,
-   			}],
-   		}});
+  			  color: 16777215,
+	  		  thumbnail: {
+  			   url: msg.author.avatarURL,
+  	      },
+  		    fields: [{
+     				name: msg.author.username,
+ 	    			value: "―――――――"
+   		  	},
+   			  {
+  	    		name: "EXP Total",
+     				value: pExp,
+   	  			inline: true
+	      	},
+   			  {
+     				name: "Nível",
+     				value: pLv,
+   	  			inline: true
+   		  	},
+   			  {
+     				name: "EXP Necessária",
+     				value: pNext,
+   	  		},
+   		  	{
+   			  	name: "Gold",
+   				  value: pGold,
+     			}],
+   		  }});
       });
     };
 	};	
@@ -356,13 +379,15 @@ bot.on("messageCreate", (msg) => {
 				inline: true
 			}],
 		}});
-	};
-});
+	}
 
-//	3.2	Gariland Magic City
+  //	3.2	Mandalia Plains
+	else if(msg.content === "/shop" && msg.channel.id === "401723622533890049") {
+		bot.createMessage(msg.channel.id, "Não há lojas por aqui.");
+  }
 
-bot.on("messageCreate", (msg) => {
-	if(msg.content === "/shop" && msg.channel.id === "399316614152978446") {
+  //	3.3	Gariland Magic City
+  else if(msg.content === "/shop" && msg.channel.id === "399316614152978446") {
 		bot.createMessage(msg.channel.id, {embed: {
 			color: 3447003,
 //			thumbnail: {
@@ -436,15 +461,64 @@ bot.on("messageCreate", (msg) => {
 				inline: true
 			}],
 		}});
+	}
+
+  //	3.x	Test Bot
+	else if(msg.content === "/shop" && msg.channel.id === "400772367560736769") {
+		bot.createMessage(msg.channel.id, "Não há lojas por aqui.");
 	};
 });
 
-//	3.3	Test Bot
+//  4  Inimigos
 
 bot.on("messageCreate", (msg) => {
-	if(msg.content === "/shop" && msg.channel.id === "400772367560736769") {
-		bot.createMessage(msg.channel.id, "Não há lojas por aqui.");
-	};
+  
+  //	Verificar se jogador já foram criados
+  if (fs.existsSync(dbplayer + i + exptxt)) {
+  } else {
+    //  Criar jogador
+    fs.writeFile((dbplayer + i + exptxt), "0")
+    fs.writeFile((dbplayer + i + lvtxt), "1")
+    fs.writeFile((dbplayer + i + nexttxt), "109")
+    fs.writeFile((dbplayer + i + goldtxt), "100")
+  }
+	//	Fim das verificaçôes de jogador
+  
+  //  Definir nível do Jogador
+  fs.readFile(dbplayer + i + lvtxt, 'utf8', function(err, data) {
+    winRate = data
+  
+    //  4.1  Igros Castle
+    if(msg.content === "/field" && msg.channel.id === "400723494738067456") {
+		  bot.createMessage(msg.channel.id, "Não há monstros ou inimigos por aqui...");
+    }
+  
+    //  4.2  Mandalia Plains
+    else if (msg.content === "/field" && msg.channel.id === "401723622533890049") {
+      bot.createMessage(msg.channel.id, {embed: {
+  		  fields: [{
+     		  name: "Inimigos",
+   	    	value: "Chocobo\nGoblin",
+          inline: true
+   	  	},
+   		  {
+     		  name: "% de Vitória",
+ 	    	  value: (Math.floor(139 + Number(winRate)) / 2) + "%\n" + (Math.floor(159 + Number(winRate)) / 2) + "%",
+          inline: true
+   		  }],
+   	  }});
+    }
+
+    //  4.3  Gariland Magic City
+    else if (msg.content === "/field" && msg.channel.id === "399316614152978446") {
+		  bot.createMessage(msg.channel.id, "Não há monstros ou inimigos por aqui...");
+    }
+
+    //  4.x  Test Bot
+    else if(msg.content === "/field" && msg.channel.id === "400772367560736769") {
+		  bot.createMessage(msg.channel.id, "Não há monstros ou inimigos por aqui...");
+    };
+  });
 });
 
 //	Fim
